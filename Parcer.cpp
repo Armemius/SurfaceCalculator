@@ -28,6 +28,12 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 					raw.insert(i, "inv");
 					i += 3;
 				}
+				if (raw[i + 1] == 'x') {
+					raw.erase(i, 1);
+					raw.insert(i, "inv(");
+					i += 5;
+					raw.insert(i, ")");
+				}
 				if (isLetter(raw[i + 1])) {
 					raw.erase(i, 1);
 					raw.insert(i, "inv(");
@@ -60,6 +66,29 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 					raw.erase(i, 1);
 					raw.insert(i, "inv");
 					i += 3;
+				}
+				if (raw[i + 1] == 'x') {
+					raw.erase(i, 1);
+					raw.insert(i, "inv(");
+					i += 5;
+					raw.insert(i, ")");
+				}
+				if (isLetter(raw[i + 1])) {
+					raw.erase(i, 1);
+					raw.insert(i, "inv(");
+					i += 4;
+					int cnt = 0;
+					for (int j = 0;; ++j) {
+						if (raw[i + j] == '(')
+							cnt++;
+						if (raw[i + j] == ')')
+							cnt--;
+						if (cnt == 0 && raw[i + j] == ')') {
+							raw.insert(i + j, ")");
+							break;
+						}
+					}
+					int j = 0;
 				}
 			}
 		}

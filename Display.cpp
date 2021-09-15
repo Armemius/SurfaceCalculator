@@ -106,7 +106,7 @@ void Display::process() {
                     shiftX *= 2;
                     shiftY *= 2;
                 }
-                if (event.key.code == sf::Keyboard::E && scale > 50) {
+                if (event.key.code == sf::Keyboard::E && scale > 12.5) {
                     scale /= 2;
                     shiftX /= 2;
                     shiftY /= 2;
