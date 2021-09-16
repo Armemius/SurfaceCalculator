@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <stack>
 #include <map>
+#include <chrono>
 
 #include "IOperation.h"
 #include "Operations.h"
@@ -18,9 +19,6 @@
 #include "Display.h"
 #include "GraphicHandler.h"
 
-#define FUNC_1 (std::pow(2, x) + 1)
-#define FUNC_2 (std::pow(x, 5))
-#define FUNC_3 ((1 - x) / 3)
 #define DISPLAY
 
 #define null NULL

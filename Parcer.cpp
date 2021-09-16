@@ -14,8 +14,8 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 	for (int i = raw.size() - 1; i >= 0; --i) {
 		if (raw[i] == '-') {
 			if (i == 0) {
-				if (isDigit(raw[i + 1])) {
-					raw.erase(i, 1);
+				raw.erase(i, 1);
+				if (isDigit(raw[i])) {
 					raw.insert(i, "inv(");
 					i += 4;
 					int j = 0;
@@ -23,19 +23,16 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 						++j;
 					raw.insert(i + j, ")");
 				}
-				if (raw[i + 1] == '(') {
-					raw.erase(i, 1);
+				if (raw[i] == '(') {
 					raw.insert(i, "inv");
 					i += 3;
 				}
-				if (raw[i + 1] == 'x') {
-					raw.erase(i, 1);
+				if (raw[i] == 'x') {
 					raw.insert(i, "inv(");
 					i += 5;
 					raw.insert(i, ")");
 				}
-				if (isLetter(raw[i + 1])) {
-					raw.erase(i, 1);
+				if (isLetter(raw[i])) {
 					raw.insert(i, "inv(");
 					i += 4;
 					int cnt = 0;
@@ -51,8 +48,10 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 					}
 					int j = 0;
 				}
+				continue;
 			}
-			if (isSign(raw[i - 1])) {
+
+			if (isSign(raw[i - 1]) && raw[i - 1] != ')') {
 				if (isDigit(raw[i + 1])) {
 					raw.erase(i, 1);
 					raw.insert(i, "inv(");
@@ -93,8 +92,9 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 			}
 		}
 	}
-	raw += "\n";
+	raw = raw + "\n";
 	this->raw = raw;
+	std::cout << raw << "\n";
 	this->pos = 0;
 	while (raw[pos] != '\n') {
 		char ch = raw[pos];
@@ -162,7 +162,7 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 	std::vector<IOperation*>* output = new std::vector<IOperation*>();
 	for (std::string i : res) {
 		if (isDigit(i[0])) {
-			output->push_back(new Number(std::stoi(i)));
+			output->push_back(new Number(std::stod(i)));
 			continue;
 		}
 		if (i.size() == 1 && i[0] == 'x') {
@@ -242,7 +242,7 @@ std::string Parser::parseNumber() {
 	if (!isDigit(raw[pos]))
 		throw std::exception("Parser error: no number detected while trying to call parseNumber() function\n");
 	std::string number = "";
-	while (raw[pos] != '\n' && isDigit(raw[pos])) {
+	while (raw[pos] != '\n' && (isDigit(raw[pos]))) {
 		number += (raw[pos]);
 		pos++;
 	}

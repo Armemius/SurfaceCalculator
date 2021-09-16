@@ -2,6 +2,10 @@
 
 double Function::result(double x) {
 	std::stack<IOperation*> numbers;
+	if (this == NULL)
+		return 0;
+	if (line == NULL)
+		throw std::exception("Function error: line is null");
 	for (IOperation* i : *line) {
 		if (i->isNumber()) {
 			numbers.push(i);
@@ -10,6 +14,8 @@ double Function::result(double x) {
 		if (i->requireSecond()) {
 			IOperation* fst = numbers.top();
 			numbers.pop();
+			if (numbers.size() == 0)
+				throw std::exception("Function error: no matching variable for binary function");
 			IOperation* sec = numbers.top();
 			numbers.pop();
 			numbers.push(new Number(i->solve(sec->solve(x), fst->solve(x))));

@@ -3,10 +3,13 @@
 
 class Display {
 public:
-	void process();
 	void setFunc1(Function* func);
 	void setFunc2(Function* func);
 	void setFunc3(Function* func);
+
+	void process();
+
+	bool inProcess = false;
 private:
 	// Screen size
 	static const int horizontalPx = 1920;
@@ -15,4 +18,8 @@ private:
 	Function* func1 = NULL;
 	Function* func2 = NULL;
 	Function* func3 = NULL;
+
+	double f1wf2;
+	double f2wf3;
+	double f1wf3;
 };

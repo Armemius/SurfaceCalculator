@@ -36,8 +36,13 @@ void Display::process() {
         if (func1 != NULL)
             for (double x = -50; x < 49;) {
                 sf::VertexArray graph(sf::LinesStrip, 2);
-                graph[0].color = sf::Color::Black;
-                graph[1].color = sf::Color::Black;
+                if (x > std::min(f1wf2, f1wf3) && x < std::max(f1wf2, f1wf3)) {
+                    graph[0].color = sf::Color::Blue;
+                    graph[1].color = sf::Color::Blue;
+                } else {
+                    graph[0].color = sf::Color::Black;
+                    graph[1].color = sf::Color::Black;
+                }
                 double firstPosY = zeroY - 1 - this->func1->result(x) * fieldSize;
                 graph[0].position = sf::Vector2f(zeroX - 1 + x * fieldSize, firstPosY);
                 x += 0.01;
@@ -50,8 +55,14 @@ void Display::process() {
         if (func2 != NULL)
             for (double x = -50; x < 49;) {
                 sf::VertexArray graph(sf::LinesStrip, 2);
-                graph[0].color = sf::Color::Black;
-                graph[1].color = sf::Color::Black;
+                if (x > std::min(f2wf3, f1wf2) && x < std::max(f2wf3, f1wf2)) {
+                    graph[0].color = sf::Color::Blue;
+                    graph[1].color = sf::Color::Blue;
+                }
+                else {
+                    graph[0].color = sf::Color::Black;
+                    graph[1].color = sf::Color::Black;
+                }
                 double firstPosY = zeroY - 1 - this->func2->result(x) * fieldSize;
                 graph[0].position = sf::Vector2f(zeroX - 1 + x * fieldSize, firstPosY);
                 x += 0.01;
@@ -64,8 +75,14 @@ void Display::process() {
         if (func3 != NULL)
             for (double x = -50; x < 49;) {
                 sf::VertexArray graph(sf::LinesStrip, 2);
-                graph[0].color = sf::Color::Black;
-                graph[1].color = sf::Color::Black;
+                if (x > std::min(f1wf3, f2wf3) && x < std::max(f1wf3, f2wf3)) {
+                    graph[0].color = sf::Color::Blue;
+                    graph[1].color = sf::Color::Blue;
+                }
+                else {
+                    graph[0].color = sf::Color::Black;
+                    graph[1].color = sf::Color::Black;
+                }
                 double firstPosY = zeroY - 1 - this->func3->result(x) * fieldSize;
                 graph[0].position = sf::Vector2f(zeroX - 1 + x * fieldSize, firstPosY);
                 x += 0.01;
@@ -93,6 +110,33 @@ void Display::process() {
                 window.draw(lineY);
             }
         }
+
+        // Intersection points
+        sf::CircleShape point1, point2, point3;
+        point1.setFillColor(sf::Color(250, 150, 150, 125));
+        point2.setFillColor(sf::Color(250, 150, 150, 125));
+        point3.setFillColor(sf::Color(250, 150, 150, 125));
+        point1.setOutlineColor(sf::Color(0, 0, 0, 175));
+        point2.setOutlineColor(sf::Color(0, 0, 0, 175));
+        point3.setOutlineColor(sf::Color(0, 0, 0, 175));
+        point1.setOutlineThickness(2);
+        point2.setOutlineThickness(2);
+        point3.setOutlineThickness(2);
+        point1.setRadius(2);
+        point2.setRadius(2);
+        point3.setRadius(2);
+
+        point1.setPosition(zeroX + f1wf2 * fieldSize - 2, zeroY - func1->result(f1wf2) * fieldSize - 2);
+        point2.setPosition(zeroX + f2wf3 * fieldSize - 2, zeroY - func2->result(f2wf3) * fieldSize - 2);
+        point3.setPosition(zeroX + f1wf3 * fieldSize - 2, zeroY - func3->result(f1wf3) * fieldSize - 2);
+
+        if (func1 != NULL)
+            window.draw(point1);
+        if (func2 != NULL)
+            window.draw(point2);
+        if (func3 != NULL)
+            window.draw(point3);
+
         window.display();
 
         sf::Event event;
@@ -137,12 +181,18 @@ void Display::process() {
 
 void Display::setFunc1(Function* func) {
     this->func1 = func;
+    this->f1wf2 = GraphicHandler::getIntersection(this->func1, this->func2);
+    this->f1wf3 = GraphicHandler::getIntersection(this->func1, this->func3);
 }
 
 void Display::setFunc2(Function* func) {
     this->func2 = func;
+    this->f1wf2 = GraphicHandler::getIntersection(this->func2, this->func1);
+    this->f2wf3 = GraphicHandler::getIntersection(this->func2, this->func3);
 }
 
 void Display::setFunc3(Function* func) {
     this->func3 = func;
+    this->f1wf3 = GraphicHandler::getIntersection(this->func3, this->func1);
+    this->f2wf3 = GraphicHandler::getIntersection(this->func3, this->func2);
 }
