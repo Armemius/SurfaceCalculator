@@ -31,3 +31,31 @@ double GraphicHandler::getIntersection(Function* func1, Function* func2) {
 		return INT_MAX;
 	return (range.at(0) + range.at(1)) / 2.0;
 }
+
+double GraphicHandler::integral(Function* func, double from, double to) {
+	double EPS = 1e-5;
+	double step = 1, res = 0, prevRes = -999999.0;
+	do {
+		prevRes = res;
+		res = 0;
+		for (double str = from + step / 2; str < to - step / 2; str += step) {
+			res += step * func->result(str);
+		}
+		step /= 5;
+	} while (std::abs(res - prevRes) > EPS && step > 1e-6);
+	
+	return res;
+}
+
+void GraphicHandler::checkIntersects(Function* func1, Function* func2) {
+	int intersects = 0;
+	for (double x = -50; x < 50; x += 0.1) {
+		if (std::abs(func1->result(x) - func2->result(x)) < 0.5) {
+			intersects++;
+			x++;
+		}
+	}
+	if (intersects == 0)
+		throw std::exception("Check error: less than 1 intersection\n");
+	return;
+}

@@ -5,7 +5,7 @@ class Parser {
 public:
 	Parser();
 	std::vector<IOperation*>* parse(std::string raw);
-//private:
+private:
 	std::string raw = "\n";
 	int pos = 0;
 	std::stack<std::string> buff;

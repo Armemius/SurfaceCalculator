@@ -11,6 +11,7 @@
 #include <stack>
 #include <map>
 #include <chrono>
+#include <stdlib.h>
 
 #include "IOperation.h"
 #include "Operations.h"

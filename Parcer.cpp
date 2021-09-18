@@ -94,7 +94,6 @@ std::vector<IOperation*>* Parser::parse(std::string raw) {
 	}
 	raw = raw + "\n";
 	this->raw = raw;
-	std::cout << raw << "\n";
 	this->pos = 0;
 	while (raw[pos] != '\n') {
 		char ch = raw[pos];

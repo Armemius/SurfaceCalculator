@@ -1,5 +1,23 @@
 #include "stdafx.h"
 
+Function::Function() {}
+
+Function::Function(std::string raw) {
+	raw.erase(remove_if(raw.begin(), raw.end(), isspace), raw.end());
+	Parser parser;
+	this->line = parser.parse(raw);
+	return;
+}
+
+Function::~Function() {
+	if (this->line != NULL) {
+		for (int i = 0; i < line->size(); i++) {
+			delete line->at(i);
+		}
+		delete line;
+	}
+}
+
 double Function::result(double x) {
 	std::stack<IOperation*> numbers;
 	if (this == NULL)

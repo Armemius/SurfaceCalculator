@@ -3,6 +3,6 @@
 class GraphicHandler {
 public:
 	static double getIntersection(Function* func1, Function* func2);
-private:
-
+	static double integral(Function* func, double from, double to);
+	static void checkIntersects(Function* func1, Function* func2);
 };
