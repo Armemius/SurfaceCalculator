@@ -4,45 +4,36 @@ double GraphicHandler::getIntersection(Function* func1, Function* func2) {
 	if (func1 == null || func2 == null) {
 		return 0;
 	}
-	double EPS = 10;
+	double EPS = 0.1;
 	std::vector<double> range;
-	for (double x = -50; x < 50; x += 0.1) {
+	for (double x = -50; x < 50; x += 0.001) {
 		if (std::abs(func1->result(x) - func2->result(x)) < EPS) {
-			if (range.size() < 2)
-				range.push_back(x);
-			else
-				range.at(1) = x;
+			range.push_back(x);
 		}
 	}
-	while (EPS > 1e-6) {
-		double start = range.at(0), finish = range.at(1);
-		range = std::vector<double>();
-		for (double x = start; x < finish; x += EPS / 100) {
-			if (std::abs(func1->result(x) - func2->result(x)) < EPS) {
-				if (range.size() < 2)
-					range.push_back(x);
-				else
-					range.at(1) = x;
-			}
+	double mid = (range.at(range.size() - 2) + range.at(range.size() - 1)) / 2.0;
+	double devi = 666, res = 666;
+	for (double x = mid - 0.3; x < mid + 0.3; x += 0.00001) {
+		double tmp = std::abs(func1->result(x) - func2->result(x));
+		if (tmp < devi) {
+			res = x;
+			devi = tmp;
 		}
-		EPS /= 10;
 	}
-	if (range.size() < 2)
-		return INT_MAX;
-	return (range.at(0) + range.at(1)) / 2.0;
+	return res;
 }
 
 double GraphicHandler::integral(Function* func, double from, double to) {
 	double EPS = 1e-5;
-	double step = 1, res = 0, prevRes = -999999.0;
+	double segments = 1, res = 0, prevRes = -999999.0;
 	do {
 		prevRes = res;
 		res = 0;
-		for (double str = from + step / 2; str < to - step / 2; str += step) {
-			res += step * func->result(str);
+		for (double str = from; str < to; str += std::abs(to - from) / segments) {
+			res += (to - from) / segments * func->result(str + (to - from) / segments / 2);
 		}
-		step /= 5;
-	} while (std::abs(res - prevRes) > EPS && step > 1e-6);
+		segments++;
+	} while (std::abs(res - prevRes) > EPS || segments < 100);
 	
 	return res;
 }

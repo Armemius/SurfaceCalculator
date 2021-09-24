@@ -7,6 +7,7 @@ void Display::process() {
     sf::RenderWindow window(sf::VideoMode(horizontalPx, verticalPx), "Surface calculator", sf::Style::Fullscreen);
     while (window.isOpen())
     {
+        while (inProcess);
         static bool doFill = true;
         // Main(thick) lines
         window.clear(sf::Color(245, 245, 250));
@@ -183,6 +184,25 @@ void Display::process() {
     return;
 }
 
+void Display::setFunctions(Function* func1, Function* func2, Function* func3) {
+    this->inProcess = true;
+    delete this->func1;
+    delete this->func2;
+    delete this->func3;
+
+    this->func1 = func1;
+    this->func2 = func2;
+    this->func3 = func3;
+    
+    this->f1wf2 = GraphicHandler::getIntersection(this->func1, this->func2);
+    this->f1wf3 = GraphicHandler::getIntersection(this->func1, this->func3);
+    this->f1wf2 = GraphicHandler::getIntersection(this->func2, this->func1);
+    this->f2wf3 = GraphicHandler::getIntersection(this->func2, this->func3);
+    this->f1wf3 = GraphicHandler::getIntersection(this->func3, this->func1);
+    this->f2wf3 = GraphicHandler::getIntersection(this->func3, this->func2);
+    this->inProcess = false;
+}
+
 void Display::setFunc1(Function* func) {
     delete func1;
     this->func1 = func;
@@ -202,4 +222,10 @@ void Display::setFunc3(Function* func) {
     this->func3 = func;
     this->f1wf3 = GraphicHandler::getIntersection(this->func3, this->func1);
     this->f2wf3 = GraphicHandler::getIntersection(this->func3, this->func2);
+}
+
+Display::~Display() {
+    delete func1;
+    delete func2;
+    delete func3;
 }
