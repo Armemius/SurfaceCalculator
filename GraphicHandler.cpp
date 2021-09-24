@@ -20,12 +20,28 @@ double GraphicHandler::getIntersection(Function* func1, Function* func2) {
 			devi = tmp;
 		}
 	}
-	return res;
+	devi = 666; 
+	double newRes = 666;
+	for (uint64_t i = 1; i < 1e10; i *= 10) {
+		devi = 666;
+		newRes = 666;
+		for (double x = res - 0.00005 / i; x < res + 0.00005 / i; x += 0.000001 / i) {
+			double tmp = std::abs(func1->result(x) - func2->result(x));
+			if (tmp < devi) {
+				newRes = x;
+				devi = tmp;
+			}
+		}
+		res = newRes;
+	}
+	//std::cout << std::fixed << std::setprecision(8) << newRes << "\n";
+	//std::cout << std::fixed << std::setprecision(20) << func1->result(newRes) - func2->result(newRes) << "\n";
+	return newRes;
 }
 
 double GraphicHandler::integral(Function* func, double from, double to) {
 	double EPS = 1e-5;
-	double segments = 1, res = 0, prevRes = -999999.0;
+	double segments = 10, res = 0, prevRes = -999999.0;
 	do {
 		prevRes = res;
 		res = 0;
@@ -33,7 +49,7 @@ double GraphicHandler::integral(Function* func, double from, double to) {
 			res += (to - from) / segments * func->result(str + (to - from) / segments / 2);
 		}
 		segments++;
-	} while (std::abs(res - prevRes) > EPS || segments < 100);
+	} while (std::abs(res - prevRes) > EPS && segments < 1000);
 	
 	return res;
 }

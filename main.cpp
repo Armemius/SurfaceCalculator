@@ -5,6 +5,7 @@ void displayThread();
 void calculateSurface();
 
 double surface = -1;
+int mct = 1000000;
 bool monteCarlo = false;
 std::thread disp(displayThread);
 Display display;
@@ -26,6 +27,7 @@ int main() {
 void scanner() {
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     static bool disp = false;
+    static bool doSurface = true;
     for (;;) {
         std::cout << "[WARN] Graphics must have ONE intersection between each pair!\n";
         try {
@@ -45,7 +47,19 @@ void scanner() {
                             monteCarlo = false;
                         }
                     }
-                    if (line == "-disp") {
+                    else if (line == "-mct") {
+                        std::cin >> mct;
+                    }
+                    else if (line == "-surf") {
+                        std::cin >> line;
+                        if (line == "true") {
+                            doSurface = true;
+                        }
+                        else {
+                            doSurface = false;
+                        }
+                    }
+                    else if (line == "-disp") {
                         std::cin >> line;
                         if (line == "true") {
                             if (display.inProcess == false) {
@@ -56,6 +70,8 @@ void scanner() {
                         else {
                             display.inProcess = false;
                         }
+                    } else if (line != "-apply"){
+                        std::cout << "not recognised\n";
                     }
                 }
                 continue;
@@ -77,21 +93,23 @@ void scanner() {
             funcp1 = func1;
             funcp2 = func2;
             funcp3 = func3;
-            surface = 0;
-            std::cout << "Calculating surface";
-            std::vector<std::string> progress{"|", "/", "-", "\\"};
-            surface = -1;
-            std::thread calc(calculateSurface);
-            calc.detach();
-            while (surface == -1) {
-                static int i = 0;
-                std::cout << "\rCalculating surface " + progress.at(i);
-                i++;
-                if (i > progress.size() - 1)
-                    i = 0;
-                std::this_thread::sleep_for(std::chrono::milliseconds(75));
+            if (doSurface) {
+                surface = 0;
+                std::cout << "Calculating surface";
+                std::vector<std::string> progress{ "|", "/", "-", "\\" };
+                surface = -1;
+                std::thread calc(calculateSurface);
+                calc.detach();
+                while (surface == -1) {
+                    static int i = 0;
+                    std::cout << "\rCalculating surface " + progress.at(i);
+                    i++;
+                    if (i > progress.size() - 1)
+                        i = 0;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(75));
+                }
+                std::cout << std::fixed << std::setprecision(5) << "\rSurface size: " << surface << "                      \n";
             }
-            std::cout << std::fixed << std::setprecision(4) << "\rSurface size: " << surface << "                      \n";
         } catch(std::exception e) {
             std::cout << e.what() << "\nResetting functions...\n";
             system("pause");
@@ -106,11 +124,9 @@ void scanner() {
 
 void displayThread() {
     try {
-        for (;;) {
-            if (display.inProcess)
-                display.process();
-            while (!display.inProcess);
-        }
+        if (display.inProcess)
+            display.process();
+        while (!display.inProcess);
         
     } catch(std::exception e) {
         std::cout << "Runtime error: totally bruh\n";
@@ -172,7 +188,7 @@ void calculateSurface() {
                 maxY = maxYTmp;
         }
 
-        for (int i = 0; i < 500000; ++i, ++count) {
+        for (int i = 0; i < mct; ++i, ++count) {
             std::uniform_real_distribution<double> unifx(from, to);
             std::uniform_real_distribution<double> unify(minY, maxY);
             std::random_device rand_dev;
